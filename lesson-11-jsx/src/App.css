@@ -1,0 +1,28 @@
+#root {
+  width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background: #b4b3ac;
+  border-radius: 8px;
+}
+
+#core-concepts img {
+  width: 100px;
+}
+/* 
+#core-concepts ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}  */
+#core-concepts ul {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
