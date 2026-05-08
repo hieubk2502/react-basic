@@ -4,10 +4,14 @@ function TabButton(props) {
   return (
     <>
       <li>
-        <button>{props.children}</button>
+        <button onClick={handleClick}>{props.children}</button>
       </li>
     </>
   );
+}
+
+function handleClick() {
+  alert("test");
 }
 
 TabButton.PropTypes = {
