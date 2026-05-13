@@ -1,9 +1,11 @@
 import QUESTIONS from "../../question.js";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import completedQuiz from "../../assets/react.svg";
 import QuestionTimer from "./QuestionTimer.jsx";
+import Answers from "./Answers.jsx";
 
 export default function Quiz() {
+  const shuffleQuestion = useRef();
   const [userAnswers, setUserAnswers] = useState([]);
   const [answerState, setAnswerState] = useState("");
 
@@ -11,27 +13,34 @@ export default function Quiz() {
 
   const complete = activeQuestionIndex === QUESTIONS.length;
 
-  const handleSelectAnswer = useCallback(function handleSelectAnswer(
-    selectAnswer,
-  ) {
-    setAnswerState("answered");
+  const handleSelectAnswer = useCallback(
+    function handleSelectAnswer(selectAnswer) {
+      setAnswerState("answered");
 
-    setUserAnswers((prev) => {
-      return [...prev, selectAnswer];
-    });
+      setUserAnswers((prev) => {
+        return [...prev, selectAnswer];
+      });
 
-    setTimeout(() => {
-      if (selectAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
-        setAnswerState("correct");
-      } else {
-        setAnswerState("wrong");
-      }
-    }, 1000);
+      const correctAnswer = QUESTIONS[activeQuestionIndex].answers[0];
 
-    setTimeout(() => {
-      setAnswerState("");
-    }, 2000);
-  }, []);
+      setTimeout(() => {
+        if (selectAnswer === correctAnswer) {
+          setAnswerState("correct");
+        } else {
+          setAnswerState("wrong");
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        setAnswerState("");
+      }, 2000);
+    },
+    [activeQuestionIndex],
+  );
+
+  if(!shuffleQuestion.current) {
+    shuffleQuestion.current = QUESTIONS[activeQuestionIndex].answers;
+  }
 
   const handleSkipAnswer = useCallback(() => {
     handleSelectAnswer(null);
@@ -59,26 +68,13 @@ export default function Quiz() {
           />
           <h2>{QUESTIONS[activeQuestionIndex].text}</h2>
 
-          <ul id="answers">
-            {QUESTIONS[activeQuestionIndex].answers.map((ans, index) => {
-              const isSelected = userAnswers[userAnswers.length -1] === ans;
-
-              let css = '';
-              if(isSelected && answerState === 'answered') {
-                css = 'selected';
-              }
-
-              if(isSelected && (answerState === 'correct' || answerState === 'wrong' )) {
-                css = answerState;
-              }
-
-              return (
-                <li key={index} className="answer">
-                  <button onClick={() => handleSelectAnswer(ans)} className="css">{ans}</button>
-                </li>
-              );
-            })}
-          </ul>
+          <Answers 
+          key={activeQuestionIndex}
+          answers={QUESTIONS[activeQuestionIndex].answers}
+          selectedAnswer={userAnswers[userAnswers.length - 1 ]}
+          answerState={answerState}
+          onSelect={handleSelectAnswer}
+          />
         </div>
       </div>
     </>
